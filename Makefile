@@ -16,7 +16,7 @@ build:
 # Build Docker images
 docker-build: build
 	@echo "Building Docker images..."
-	@docker build -f deployments/docker/Dockerfile.api -t cloud-storage/api:latest .
+	@$(DOCKER_COMPOSE) build
 	@echo "Docker images built."
 
 # Start services with Docker Compose

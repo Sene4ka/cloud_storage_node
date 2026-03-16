@@ -1,16 +1,13 @@
-version: '3.8'
-
 services:
-  # PgSQL DB
   postgres:
     image: postgres:15-alpine
-    container_name: cloud_storage_postgres
+    container_name: cloud_storage_postgres_node
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./migrations:/docker-entrypoint-initdb.d
@@ -22,26 +19,41 @@ services:
       timeout: 5s
       retries: 5
 
-  # Redis
+  migrate:
+    image: migrate/migrate:v4.16.2
+    container_name: cloud_storage_migrate_node
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}",
+      "up"
+    ]
+    networks:
+      - cloud_storage_network
+
   redis:
     image: redis:7-alpine
-    container_name: cloud_storage_redis
+    container_name: cloud_storage_redis_node
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - redis_data:/data
     networks:
       - cloud_storage_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # MinIO
   minio:
     image: minio/minio:latest
-    container_name: cloud_storage_minio
+    container_name: cloud_storage_minio_node
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
@@ -59,32 +71,34 @@ services:
       timeout: 20s
       retries: 3
 
-  # API
   api:
     build:
       context: .
       dockerfile: deployments/docker/Dockerfile.api
     container_name: cloud_storage_api_nest
+    env_file:
+      - .env
     environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_SSLMODE: ${DB_SSLMODE}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ACCESS_TTL: ${JWT_ACCESS_TTL}
-      JWT_REFRESH_TTL: ${JWT_REFRESH_TTL}
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
-      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT}
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
-      MINIO_USE_SSL: ${MINIO_USE_SSL}
-      MINIO_BUCKET: ${MINIO_BUCKET}
+      - NODE_ENV=${NODE_ENV}
+      - SERVER_PORT=${SERVER_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
     ports:
-      - "8080:3000"
+      - "${SERVER_PORT_EXTERNAL}:${SERVER_PORT}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -92,8 +106,11 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     networks:
       - cloud_storage_network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
