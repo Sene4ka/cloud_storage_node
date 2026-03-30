@@ -8,22 +8,22 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
+  @Column({ name: 'password_hash', select: false })
   passwordHash: string;
 
   @Column()
   name: string;
 
-  @Column({ default: false })
+  @Column({ name: 'is_verified', default: false })
   isVerified: boolean;
 
-  @Column({ default: false })
+  @Column({ name: 'is_2fa_enabled', default: false })
   is2FAEnabled: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   checkPassword(plainPassword: string): boolean {

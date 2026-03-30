@@ -15,7 +15,7 @@ export class File {
   @PrimaryColumn('uuid')
   id: string;
 
-  @Column('uuid')
+  @Column({ type: 'uuid', name: 'user_id' })
   @Index()
   userId: string;
 
@@ -47,7 +47,7 @@ export class File {
   @Column({ name: 'is_public', default: false })
   isPublic: boolean;
 
-  @Column('simple-json', { nullable: true })
+  @Column({ type: 'text', nullable: true })
   tags: Record<string, string> | null;
 
   @CreateDateColumn({ name: 'created_at' })

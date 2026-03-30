@@ -15,8 +15,8 @@ export class MailService implements MailServiceInterface {
 
     this.transporter = nodemailer.createTransport({
       host: this.configService.getOrThrow<string>('SMTP_HOST'),
-      port: this.configService.get<number>('SMTP_PORT', 587),
-      secure: this.configService.get<boolean>('SMTP_SECURE', false),
+      port: this.configService.get<number>('SMTP_PORT', 465),
+      secure: this.configService.get('SMTP_SECURE') === 'true',
       auth: {
         user: this.configService.getOrThrow<string>('SMTP_USERNAME'),
         pass: this.configService.getOrThrow<string>('SMTP_PASSWORD'),
@@ -75,29 +75,6 @@ export class MailService implements MailServiceInterface {
         success: false,
         message: `SMTP Error: ${error.message}`,
       };
-    }
-  }
-
-  async sendEmail(
-    to: string,
-    subject: string,
-    html: string,
-    text?: string,
-  ): Promise<boolean> {
-    try {
-      await this.transporter.sendMail({
-        from: this.fromAddress,
-        to,
-        subject,
-        html,
-        text: text || subject,
-      });
-
-      this.logger.log(`Email sent to ${to}`);
-      return true;
-    } catch (error) {
-      this.logger.error(`Failed to send email: ${error.message}`);
-      return false;
     }
   }
 }

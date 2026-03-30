@@ -1,6 +1,5 @@
 import {
   Injectable,
-  NotFoundException,
   ForbiddenException,
   Logger,
 } from '@nestjs/common';
@@ -69,8 +68,6 @@ export class MetadataService {
     input: UpdateMetadataInputDto,
     userId: string,
   ): Promise<UpdateMetadataOutputDto> {
-    const existing = await this.filesRepo.findByIdAndUserOrFail(fileId, userId);
-
     const updated = await this.filesRepo.update(fileId, userId, {
       filename: input.filename,
       originalName: input.originalName,
@@ -108,14 +105,6 @@ export class MetadataService {
       success: true,
       message: 'File restored from trash',
     };
-  }
-
-  async checkAccess(fileId: string, userId: string): Promise<{
-    hasAccess: boolean;
-    storagePath?: string;
-    bucket?: string;
-  }> {
-    return this.filesRepo.checkAccess(fileId, userId);
   }
 
   async deleteMetadata(fileId: string, userId: string): Promise<void> {

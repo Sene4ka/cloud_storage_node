@@ -21,7 +21,6 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  // Health endpoint
   app.getHttpAdapter().get('/health', (req, res) => {
     res.status(200).json({ status: 'healthy' });
   });

@@ -1,14 +1,8 @@
-import {
-  Injectable,
-  ExecutionContext,
-  UnauthorizedException,
-  SetMetadata,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { JwtAuthService } from '../jwt/jwt-auth.service';
+import {ExecutionContext, Injectable, UnauthorizedException,} from '@nestjs/common';
+import {Reflector} from '@nestjs/core';
+import {JwtAuthService} from '../jwt/jwt-auth.service';
 
 export const IS_PUBLIC_KEY = 'isPublic';
-export const SkipAuth = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 @Injectable()
 export class JwtAuthGuard {
@@ -35,8 +29,7 @@ export class JwtAuthGuard {
     }
 
     try {
-      const payload = await this.jwtAuthService.validateAccessToken(token);
-      request.user = payload;
+      request.user = await this.jwtAuthService.validateAccessToken(token);
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }

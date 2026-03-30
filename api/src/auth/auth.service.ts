@@ -4,14 +4,13 @@ import {
   UnauthorizedException,
   NotFoundException,
   BadRequestException,
-  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersRepository } from '../users/users.repository';
 import { RedisCacheService } from '../common/cache/redis-cache.service';
-import { JwtAuthService, TokenPayload } from '../common/jwt/jwt-auth.service';
+import { JwtAuthService } from '../common/jwt/jwt-auth.service';
 import { MailService } from '../mail/mail.service.interface';
 import {
   RegisterInputDto,
@@ -50,8 +49,6 @@ import {
 
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
-
   constructor(
     private readonly usersRepo: UsersRepository,
     private readonly cache: RedisCacheService,
@@ -276,7 +273,7 @@ export class AuthService {
   }
 
   async enable2FA(input: Enable2FAInputDto, userId: string): Promise<Enable2FAResponseDto> {
-    const user = await this.usersRepo.findById(userId);
+    const user = await this.usersRepo.findByIdWithPassword(userId);
     if (!user || !user.checkPassword(input.password)) {
       throw new UnauthorizedException('Invalid password');
     }
@@ -312,7 +309,7 @@ export class AuthService {
   }
 
   async disable2FA(input: Disable2FAInputDto, userId: string): Promise<Disable2FAResponseDto> {
-    const user = await this.usersRepo.findById(userId);
+    const user = await this.usersRepo.findByIdWithPassword(userId);
     if (!user || !user.checkPassword(input.password)) {
       throw new UnauthorizedException('Invalid password');
     }
@@ -351,7 +348,7 @@ export class AuthService {
   }
 
   async changeEmail(input: ChangeEmailInputDto, userId: string): Promise<MessageResponseDto> {
-    const user = await this.usersRepo.findById(userId);
+    const user = await this.usersRepo.findByIdWithPassword(userId);
     if (!user || !user.checkPassword(input.currentPassword)) {
       throw new UnauthorizedException('Invalid password');
     }
@@ -403,7 +400,7 @@ export class AuthService {
   }
 
   async changePassword(input: ChangePasswordInputDto, userId: string): Promise<MessageResponseDto> {
-    const user = await this.usersRepo.findById(userId);
+    const user = await this.usersRepo.findByIdWithPassword(userId);
     if (!user || !user.checkPassword(input.currentPassword)) {
       throw new UnauthorizedException('Invalid current password');
     }

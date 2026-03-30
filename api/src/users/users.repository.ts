@@ -16,15 +16,39 @@ export class UsersRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const user = await this.repo.findOne({
+    return this.repo.findOne({
       where: { email },
-      select: { passwordHash: true }, // явно включаем хэш для проверки пароля
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        passwordHash: true,
+        isVerified: true,
+        is2FAEnabled: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
-    return user;
   }
 
   async findById(id: string): Promise<User | null> {
     return this.repo.findOne({ where: { id } });
+  }
+
+  async findByIdWithPassword(id: string): Promise<User | null> {
+    return this.repo.findOne({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        passwordHash: true,
+        isVerified: true,
+        is2FAEnabled: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 
   async existsByEmail(email: string): Promise<boolean> {

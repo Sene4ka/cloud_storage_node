@@ -23,12 +23,12 @@ docker-build: build
 docker-up: docker-build
 	@echo "Starting services with Docker Compose..."
 	@$(DOCKER_COMPOSE) up -d
-	@echo "Started api at http://localhost:3000"
+	@echo "Started api at http://localhost:8080"
 
 dev:
 	@echo "Starting in dev mode..."
 	docker compose up postgres redis minio -d && cd $(API_DIR) && npm run start:dev
-	@echo "Started API in dev mode at http://localhost:3000"
+	@echo "Started API in dev mode at http://localhost:8080"
 
 # Stop Docker Compose
 docker-down:

@@ -44,10 +44,6 @@ export class FilesRepository {
     return file;
   }
 
-  async findByIdAndUser(id: string, userId: string): Promise<File | null> {
-    return this.repo.findOne({ where: { id, userId } });
-  }
-
   async findByIdAndUserOrFail(id: string, userId: string): Promise<File> {
     const file = await this.repo.findOne({ where: { id, userId } });
 
@@ -132,7 +128,12 @@ export class FilesRepository {
   }> {
     const file = await this.repo.findOne({
       where: { id: fileId },
-      select: ['storagePath', 'bucket', 'isPublic', 'userId'],
+      select: {
+        storagePath: true,
+        bucket: true,
+        isPublic: true,
+        userId: true,
+      },
     });
 
     if (!file) {
@@ -163,12 +164,5 @@ export class FilesRepository {
     if (result.affected === 0) {
       throw new NotFoundException('File not found or access denied');
     }
-  }
-
-  async findByUserId(userId: string, isTrashed: boolean = false): Promise<File[]> {
-    return this.repo.find({
-      where: { userId, isTrashed },
-      order: { createdAt: 'DESC' },
-    });
   }
 }

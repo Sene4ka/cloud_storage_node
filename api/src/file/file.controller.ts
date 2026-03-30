@@ -1,30 +1,26 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Param,
   Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
   Query,
   Request,
   UseGuards,
-  HttpCode,
-  HttpStatus,
-  Header,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { FileService } from './file.service';
+import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {JwtAuthGuard} from '../common/guards/jwt-auth.guard';
+import {FileService} from './file.service';
+import {CompleteUploadInputDto, GetDownloadLinkInputDto, InitiateUploadInputDto,} from './dto/file.input.dto';
 import {
-  InitiateUploadInputDto,
-  CompleteUploadInputDto,
-  GetDownloadLinkInputDto,
-} from './dto/file.input.dto';
-import {
-  InitiateUploadOutputDto as InitiateUploadOutput,
   CompleteUploadOutputDto as CompleteUploadOutput,
-  GetDownloadLinkOutputDto as GetDownloadLinkOutput,
   DeleteFileOutputDto as DeleteFileOutput,
+  GetDownloadLinkOutputDto as GetDownloadLinkOutput,
+  InitiateUploadOutputDto as InitiateUploadOutput,
 } from './dto/file.output.dto';
 
 @ApiTags('files')
@@ -38,8 +34,7 @@ export class FileController {
   @ApiResponse({ status: 201, type: InitiateUploadOutput })
   @Header('Location', '')
   async initiateUpload(@Body() input: InitiateUploadInputDto, @Request() req) {
-    const result = await this.fileService.initiateUpload(input, req.user.userId);
-    return result;
+    return await this.fileService.initiateUpload(input, req.user.userId);
   }
 
   @Post('upload/complete')

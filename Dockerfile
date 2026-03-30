@@ -31,6 +31,8 @@ RUN apk add --no-cache curl
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
+COPY .env .env
+
 # Non-root user
 USER node
 
