@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Minio from 'minio';
 import { PresignedURLGenerator } from './minio.types';
+import { setDefaultResultOrder } from 'dns';
+
+setDefaultResultOrder('ipv4first');   
 
 @Injectable()
 export class MinioService implements PresignedURLGenerator {
