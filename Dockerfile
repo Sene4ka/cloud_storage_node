@@ -29,7 +29,7 @@ RUN apk add --no-cache curl
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
+  CMD wget --spider -q http://localhost:3000/health || exit 1
 
 COPY .env .env
 

@@ -1,14 +1,15 @@
-import {ExecutionContext, Injectable, UnauthorizedException,} from '@nestjs/common';
-import {Reflector} from '@nestjs/core';
-import {JwtAuthService} from '../jwt/jwt-auth.service';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { JwtAuthService } from '../jwt/jwt-auth.service';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 
 @Injectable()
 export class JwtAuthGuard {
   constructor(
-    private readonly jwtAuthService: JwtAuthService,
-    private readonly reflector: Reflector,
+      private readonly jwtAuthService: JwtAuthService,
+      private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -21,7 +22,7 @@ export class JwtAuthGuard {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
+    const request = this.getRequest(context); // ← заменить context.switchToHttp().getRequest()
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
@@ -35,6 +36,13 @@ export class JwtAuthGuard {
     }
 
     return true;
+  }
+
+  private getRequest(context: ExecutionContext): any {
+    if (context.getType<string>() === 'graphql') {
+      return GqlExecutionContext.create(context).getContext().req;
+    }
+    return context.switchToHttp().getRequest();
   }
 
   private extractTokenFromHeader(request: any): string | undefined {

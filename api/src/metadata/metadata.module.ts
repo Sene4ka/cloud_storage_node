@@ -6,6 +6,7 @@ import { MetadataService } from './metadata.service';
 import { MetadataController } from './metadata.controller';
 import { CommonModule } from '../common/common.module';
 import { FilesModule } from '../files/files.module';
+import {MetadataResolver} from "./metadata.resolver";
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { FilesModule } from '../files/files.module';
     CommonModule,
     FilesModule,
   ],
-  providers: [MetadataService, FilesRepository],
+  providers: [MetadataService, MetadataResolver, FilesRepository],
   controllers: [MetadataController],
   exports: [MetadataService],
 })

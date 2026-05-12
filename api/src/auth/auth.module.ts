@@ -10,6 +10,7 @@ import { RedisCacheService } from '../common/cache/redis-cache.service';
 import { User } from '../users/entities/user.entity';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { MailModule } from '../mail/mail.module';
+import {AuthResolver} from "./auth.resolver";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MailModule } from '../mail/mail.module';
   controllers: [AuthController],
   providers: [
     AuthService,
+    AuthResolver,
     JwtAuthService,
     UsersRepository,
     RedisCacheService,

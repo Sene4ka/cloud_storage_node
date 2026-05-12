@@ -169,8 +169,14 @@ export class ValidateTokenResponseDto {
   userId?: string;
 
   @ApiProperty({ required: false })
+  name?: string;
+
+  @ApiProperty({ required: false })
   email?: string;
 
   @ApiProperty({ required: false })
   expiresIn?: number;
+
+  @ApiProperty({ required: false })
+  is2FAEnabled?: boolean;
 }

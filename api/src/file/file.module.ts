@@ -7,6 +7,7 @@ import { FileController } from './file.controller';
 import { MinioService } from './minio/minio.service';
 import { CommonModule } from '../common/common.module';
 import { FilesModule } from '../files/files.module';
+import {FileResolver} from "./file.resolver";
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { FilesModule } from '../files/files.module';
     CommonModule,
     FilesModule,
   ],
-  providers: [FileService, MinioService, FilesRepository],
+  providers: [FileService, FileResolver, MinioService, FilesRepository],
   controllers: [FileController],
   exports: [FileService, MinioService],
 })
