@@ -1,150 +1,118 @@
 import { IsEmail, IsString, MinLength, MaxLength, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { InputType, Field } from '@nestjs/graphql';
 
+@InputType()
 export class RegisterInputDto {
-  @ApiProperty({ example: 'user@example.com', description: 'User email' })
-  @IsEmail()
-  email: string;
+  @ApiProperty() @IsEmail()
+  @Field() email: string;
 
-  @ApiProperty({ example: 'password123', description: 'User password', minLength: 8 })
-  @IsString()
-  @MinLength(8)
-  @MaxLength(128)
-  password: string;
+  @ApiProperty() @IsString() @MinLength(8) @MaxLength(128)
+  @Field() password: string;
 
-  @ApiProperty({ example: 'John Doe', description: 'User name' })
-  @IsString()
-  @MinLength(1)
-  @MaxLength(100)
-  name: string;
+  @ApiProperty() @IsString() @MinLength(1) @MaxLength(100)
+  @Field() name: string;
 }
 
+@InputType()
 export class RegisterCompleteInputDto {
-  @ApiProperty({ description: 'User ID' })
-  @IsUUID()
-  userId: string;
+  @ApiProperty() @IsUUID()
+  @Field() userId: string;
 
-  @ApiProperty({ example: '123456', description: 'Verification code', minLength: 6, maxLength: 6 })
-  @IsString()
-  @MinLength(6)
-  @MaxLength(6)
-  code: string;
+  @ApiProperty() @IsString() @MinLength(6) @MaxLength(6)
+  @Field() code: string;
 }
 
+@InputType()
 export class LoginInputDto {
-  @ApiProperty({ example: 'user@example.com', description: 'User email' })
-  @IsEmail()
-  email: string;
+  @ApiProperty() @IsEmail()
+  @Field() email: string;
 
-  @ApiProperty({ example: 'password123', description: 'User password' })
-  @IsString()
-  password: string;
+  @ApiProperty() @IsString()
+  @Field() password: string;
 }
 
+@InputType()
 export class LoginCompleteInputDto {
-  @ApiProperty({ description: 'Temporary token from login response' })
-  @IsString()
-  tempToken: string;
+  @ApiProperty() @IsString()
+  @Field() tempToken: string;
 
-  @ApiProperty({ example: '123456', description: '2FA verification code', minLength: 6, maxLength: 6 })
-  @IsString()
-  @MinLength(6)
-  @MaxLength(6)
-  code: string;
+  @ApiProperty() @IsString() @MinLength(6) @MaxLength(6)
+  @Field() code: string;
 }
 
+@InputType()
 export class RefreshInputDto {
-  @ApiProperty({ description: 'Refresh token' })
-  @IsString()
-  refreshToken: string;
+  @ApiProperty() @IsString()
+  @Field() refreshToken: string;
 }
 
+@InputType()
 export class LogoutInputDto {
-  @ApiProperty({ description: 'Refresh token to invalidate' })
-  @IsString()
-  refreshToken: string;
+  @ApiProperty() @IsString()
+  @Field() refreshToken: string;
 }
 
+@InputType()
 export class Enable2FAInputDto {
-  @ApiProperty({ description: 'Current password for verification' })
-  @IsString()
-  @MinLength(1)
-  password: string;
+  @ApiProperty() @IsString() @MinLength(1)
+  @Field() password: string;
 }
 
+@InputType()
 export class Enable2FACompleteInputDto {
-  @ApiProperty({ example: '123456', description: '2FA verification code', minLength: 6, maxLength: 6 })
-  @IsString()
-  @MinLength(6)
-  @MaxLength(6)
-  code: string;
+  @ApiProperty() @IsString() @MinLength(6) @MaxLength(6)
+  @Field() code: string;
 }
 
 export class Disable2FAInputDto {
-  @ApiProperty({ description: 'Current password for verification' })
-  @IsString()
-  @MinLength(1)
-  password: string;
+  @ApiProperty({ description: 'Current password for verification' }) @IsString() @MinLength(1)
+  @Field() password: string;
 }
 
 export class Disable2FACompleteInputDto {
-  @ApiProperty({ example: '123456', description: '2FA verification code', minLength: 6, maxLength: 6 })
-  @IsString()
-  @MinLength(6)
-  @MaxLength(6)
-  code: string;
+  @ApiProperty({ example: '123456', description: '2FA verification code', minLength: 6, maxLength: 6 }) @IsString() @MinLength(6) @MaxLength(6)
+  @Field() code: string;
 }
 
+@InputType()
 export class ChangeEmailInputDto {
-  @ApiProperty({ description: 'Current password for verification' })
-  @IsString()
-  @MinLength(1)
-  currentPassword: string;
+  @ApiProperty() @IsString() @MinLength(1)
+  @Field() currentPassword: string;
 
-  @ApiProperty({ example: 'newemail@example.com', description: 'New email address' })
-  @IsEmail()
-  newEmail: string;
+  @ApiProperty() @IsEmail()
+  @Field() newEmail: string;
 }
 
+@InputType()
 export class ChangeEmailCompleteInputDto {
-  @ApiProperty({ example: '123456', description: 'Verification code', minLength: 6, maxLength: 6 })
-  @IsString()
-  @MinLength(6)
-  @MaxLength(6)
-  code: string;
+  @ApiProperty() @IsString() @MinLength(6) @MaxLength(6)
+  @Field() code: string;
 }
 
+@InputType()
 export class ChangePasswordInputDto {
-  @ApiProperty({ description: 'Current password for verification' })
-  @IsString()
-  @MinLength(1)
-  currentPassword: string;
+  @ApiProperty() @IsString() @MinLength(1)
+  @Field() currentPassword: string;
 
-  @ApiProperty({ example: 'newpassword123', description: 'New password', minLength: 8 })
-  @IsString()
-  @MinLength(8)
-  @MaxLength(128)
-  newPassword: string;
+  @ApiProperty() @IsString() @MinLength(8) @MaxLength(128)
+  @Field() newPassword: string;
 }
 
+@InputType()
 export class ChangePasswordCompleteInputDto {
-  @ApiProperty({ example: '123456', description: 'Verification code', minLength: 6, maxLength: 6 })
-  @IsString()
-  @MinLength(6)
-  @MaxLength(6)
-  code: string;
+  @ApiProperty() @IsString() @MinLength(6) @MaxLength(6)
+  @Field() code: string;
 }
 
+@InputType()
 export class ChangeMetaInputDto {
-  @ApiProperty({ example: 'John Doe Updated', description: 'New user name' })
-  @IsString()
-  @MinLength(1)
-  @MaxLength(100)
-  name: string;
+  @ApiProperty() @IsString() @MinLength(1) @MaxLength(100)
+  @Field() name: string;
 }
 
+@InputType()
 export class ValidateTokenInputDto {
-  @ApiProperty({ description: 'Access token to validate' })
-  @IsString()
-  token: string;
+  @ApiProperty() @IsString()
+  @Field() token: string;
 }

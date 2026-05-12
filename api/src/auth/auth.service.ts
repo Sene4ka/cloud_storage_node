@@ -466,15 +466,18 @@ export class AuthService {
   async validateToken(input: ValidateTokenInputDto): Promise<ValidateTokenResponseDto> {
     try {
       const claims = await this.jwtService.validateAccessToken(input.token);
+      const user = await this.usersRepo.findById(claims.userId);
+      if (!user) return { valid: false };
       const expiresIn = Math.floor(
-        (new Date(claims.exp! * 1000).getTime() - Date.now()) / 1000,
+          (new Date(claims.exp! * 1000).getTime() - Date.now()) / 1000,
       );
-
       return {
         valid: true,
         userId: claims.userId,
+        name: user.name,
         email: claims.email,
         expiresIn,
+        is2FAEnabled: user.is2FAEnabled,
       };
     } catch {
       return { valid: false };

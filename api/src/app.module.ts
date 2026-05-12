@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
+import GraphQLJSON from 'graphql-type-json';
 import { AuthModule } from './auth/auth.module';
 import { FileModule } from './file/file.module';
 import { FilesModule } from './files/files.module';
@@ -35,6 +39,17 @@ import { MailModule } from './mail/mail.module';
         synchronize: configService.get<string>('NODE_ENV') !== 'production',
       }),
       inject: [ConfigService],
+    }),
+
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      sortSchema: true,
+      csrfPrevention: false,
+      context: ({ req }) => ({ req }),
+      buildSchemaOptions: {
+        scalarsMap: [{ type: Object, scalar: GraphQLJSON }],
+      },
     }),
 
     CommonModule,
