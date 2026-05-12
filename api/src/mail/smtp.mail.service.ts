@@ -5,8 +5,8 @@ import { MailService as MailServiceInterface } from './mail.service.interface';
 import { Send2FACodeInputDto, Send2FACodeOutputDto } from './dto/mail.dto';
 
 @Injectable()
-export class MailService implements MailServiceInterface {
-  private readonly logger = new Logger(MailService.name);
+export class SmtpMailService implements MailServiceInterface {
+  private readonly logger = new Logger(SmtpMailService.name);
   private readonly transporter: nodemailer.Transporter;
   private readonly fromAddress: string;
 
