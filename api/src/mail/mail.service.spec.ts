@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MailService } from './mail.service';
+import { MailService } from './smtp.mail.service';
 import { MockMailService } from './mock-mail.service';
 
 
