@@ -22,7 +22,7 @@ export class JwtAuthGuard {
       return true;
     }
 
-    const request = this.getRequest(context); // ← заменить context.switchToHttp().getRequest()
+    const request = this.getRequest(context);
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
