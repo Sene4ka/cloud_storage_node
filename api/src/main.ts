@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -25,11 +26,25 @@ async function bootstrap() {
     res.status(200).json({ status: 'healthy' });
   });
 
+  const config = new DocumentBuilder()
+    .setTitle('Cloud Storage API')
+    .setDescription('REST API для облачного хранилища файлов.')
+    .setVersion('2.0')
+    .addBearerAuth()
+    .addTag('auth', 'Аутентификация и управление профилем')
+    .addTag('files', 'Операции с файлами')
+    .addTag('metadata', 'Метаданные, список, сортировка, корзина')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/v2/docs', app, document);
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('SERVER_PORT', 3000);
   const host = configService.get<string>('SERVER_HOST', '0.0.0.0');
 
   await app.listen(port, host);
   console.log(`Application is running on: http://${host}:${port}`);
+  console.log(`Swagger UI: http://${host}:${port}/api/v2/docs`);
 }
 bootstrap();
